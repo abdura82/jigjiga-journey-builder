@@ -19,7 +19,7 @@ export type KiraatYonu = "alttan" | "ustten";
 
 export type Ders = "kuran" | "fikih" | "hadis";
 
-export type Grup = "seviye1" | "seviye2" | "hazirlik";
+export type Grup = string;
 
 export const GRUPLAR: { id: Grup; ad: string; hoca: string }[] = [
   { id: "seviye1", ad: "1. Seviye", hoca: "Abdurehim Hoca" },
