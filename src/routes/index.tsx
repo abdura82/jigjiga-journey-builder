@@ -1061,6 +1061,16 @@ function Index() {
                   <>
                     <DropdownMenuSeparator />
                     <DropdownMenuLabel>Yönetim</DropdownMenuLabel>
+                    <DropdownMenuItem
+                      onSelect={() => {
+                        setAyarlarAcik(false);
+                        setGruplarAcik(true);
+                      }}
+                    >
+                      <Users className="mr-2 h-4 w-4" />
+                      Grupları düzenle
+                    </DropdownMenuItem>
+
                     <DropdownMenuItem onSelect={() => setMailAcik(true)}>
                       <Mail className="mr-2 h-4 w-4" />
                       Aidat Hatırlatma E-postası
