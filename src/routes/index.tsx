@@ -1064,6 +1064,7 @@ function Index() {
                     <DropdownMenuItem
                       onSelect={() => {
                         setAyarlarAcik(false);
+                        setGrupTaslak(gruplar.map((g) => ({ ...g })));
                         setGruplarAcik(true);
                       }}
                     >
