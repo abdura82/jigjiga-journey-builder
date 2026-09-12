@@ -253,36 +253,57 @@ export async function aidatMailGonderimIsaretle(
 
 export type GrupBilgi = { id: Grup; ad: string; hoca: string };
 
-export function gruplariDinle(cb: (g: GrupBilgi[]) => void) {
-  return onSnapshot(doc(db, AYAR_COL, AYAR_DOC), (snap) => {
-    const v = snap.data()?.grupBilgi;
-    cb(
-      GRUPLAR.map((g) => {
-        const o =
-          v && typeof v === "object"
-            ? (v as Record<string, { ad?: unknown; hoca?: unknown }>)[g.id]
-            : undefined;
-        return {
-          id: g.id,
-          ad:
-            typeof o?.ad === "string" && o.ad.trim() ? o.ad.trim() : g.ad,
-          hoca:
-            typeof o?.hoca === "string" && o.hoca.trim()
-              ? o.hoca.trim()
-              : g.hoca,
-        };
-      }),
-    );
+function grupListeCoz(data: Record<string, unknown> | undefined): GrupBilgi[] {
+  const liste = data?.["grupListe"];
+  if (Array.isArray(liste)) {
+    const temiz = liste
+      .map((x) => x as { id?: unknown; ad?: unknown; hoca?: unknown })
+      .filter((x) => typeof x.id === "string" && (x.id as string).trim())
+      .map((x) => ({
+        id: (x.id as string).trim(),
+        ad: typeof x.ad === "string" ? x.ad : "",
+        hoca: typeof x.hoca === "string" ? x.hoca : "",
+      }));
+    return temiz;
+  }
+  // Eski kayıt biçimi: grupBilgi objesi
+  const v = data?.["grupBilgi"];
+  return GRUPLAR.map((g) => {
+    const o =
+      v && typeof v === "object"
+        ? (v as Record<string, { ad?: unknown; hoca?: unknown }>)[g.id]
+        : undefined;
+    return {
+      id: g.id,
+      ad: typeof o?.ad === "string" && o.ad.trim() ? o.ad.trim() : g.ad,
+      hoca:
+        typeof o?.hoca === "string" && o.hoca.trim() ? o.hoca.trim() : g.hoca,
+    };
   });
 }
 
-export async function gruplariKaydet(
-  giris: Record<string, { ad: string; hoca: string }>,
-) {
+export function gruplariDinle(cb: (g: GrupBilgi[]) => void) {
+  return onSnapshot(doc(db, AYAR_COL, AYAR_DOC), (snap) => {
+    cb(grupListeCoz(snap.data() as Record<string, unknown> | undefined));
+  });
+}
+
+export function yeniGrupId() {
+  return `grup_${Date.now().toString(36)}${Math.random().toString(36).slice(2, 6)}`;
+}
+
+export async function gruplariKaydet(liste: GrupBilgi[]) {
   await setDoc(
     doc(db, AYAR_COL, AYAR_DOC),
-    { grupBilgi: giris },
+    {
+      grupListe: liste.map((g) => ({
+        id: g.id,
+        ad: g.ad.trim(),
+        hoca: g.hoca.trim(),
+      })),
+    },
     { merge: true },
   );
 }
+
 
