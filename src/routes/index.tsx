@@ -1882,6 +1882,7 @@ function Index() {
                   <Input
                     value={g.ad}
                     aria-label="Grup adı"
+                    placeholder="Grup adı"
                     className="h-9 flex-1"
                     onChange={(e) =>
                       setGrupTaslak((t) =>
@@ -1908,18 +1909,51 @@ function Index() {
                       )
                     }
                   />
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    aria-label="Grubu sil"
+                    className="h-9 w-9 shrink-0 text-destructive"
+                    onClick={() =>
+                      setGrupTaslak((t) =>
+                        t ? t.filter((_, j) => j !== i) : t,
+                      )
+                    }
+                  >
+                    <Trash2 className="h-4 w-4" />
+                  </Button>
                 </div>
               ))}
+              <Button
+                variant="outline"
+                size="sm"
+                className="w-full"
+                onClick={() =>
+                  setGrupTaslak((t) => [
+                    ...(t ?? []),
+                    { id: yeniGrupId(), ad: "", hoca: "" },
+                  ])
+                }
+              >
+                <Plus className="h-4 w-4" />
+                Yeni grup ekle
+              </Button>
               <Button
                 className="w-full"
                 size="sm"
                 onClick={() => {
-                  const giris: Record<string, { ad: string; hoca: string }> =
-                    {};
-                  grupTaslak.forEach((g) => {
-                    giris[g.id] = { ad: g.ad.trim(), hoca: g.hoca.trim() };
-                  });
-                  void gruplariKaydet(giris)
+                  const temiz = grupTaslak
+                    .map((g) => ({
+                      id: g.id,
+                      ad: g.ad.trim(),
+                      hoca: g.hoca.trim(),
+                    }))
+                    .filter((g) => g.ad);
+                  if (temiz.length !== grupTaslak.length) {
+                    toast.error("Grup adı boş olamaz.");
+                    return;
+                  }
+                  void gruplariKaydet(temiz)
                     .then(() => toast.success("Grup bilgileri kaydedildi."))
                     .catch(() => toast.error("Grup bilgileri kaydedilemedi."));
                 }}
