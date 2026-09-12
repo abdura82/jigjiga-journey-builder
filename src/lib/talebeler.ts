@@ -97,9 +97,8 @@ export function talebeleriDinle(
               ? (v.aidat as Record<string, boolean>)
               : {},
           grup:
-            v.grup === "seviye1" || v.grup === "seviye2" || v.grup === "hazirlik"
-              ? v.grup
-              : undefined,
+            typeof v.grup === "string" && v.grup ? v.grup : undefined,
+
           sinif: typeof v.sinif === "string" ? v.sinif : undefined,
           aidatSadece: v.aidatSadece === true,
           aidatHaric: v.aidatHaric === true,
@@ -211,9 +210,8 @@ export function hocaMailAyarDinle(cb: (a: HocaMailAyar) => void) {
           ad: typeof h.ad === "string" ? h.ad : "",
           eposta: typeof h.eposta === "string" ? h.eposta : "",
           grup:
-            h.grup === "seviye1" || h.grup === "seviye2" || h.grup === "hazirlik"
-              ? h.grup
-              : undefined,
+            typeof h.grup === "string" && h.grup ? h.grup : undefined,
+
         }))
         .filter((h) => h.ad || h.eposta),
     });
